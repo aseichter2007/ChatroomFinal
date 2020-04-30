@@ -14,24 +14,34 @@ namespace Server
     {
         public static Client client;
         TcpListener server;
+        MessageHandler messageHandler;
         public Server()
         {
+            messageHandler = new MessageHandler();
             server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
             server.Start();
         }
         public void Run()
         {
+            bool run = true;
             AcceptClient();
-            string message = client.Recieve();
-            Respond(message);
+
+            do
+            {
+                string message = client.Recieve();
+
+                Respond(message);
+            } while (run);
+            
         }
-        private void AcceptClient()
+        private async void AcceptClient()
         {
             TcpClient clientSocket = default(TcpClient);
             clientSocket = server.AcceptTcpClient();
+
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
-            client = new Client(stream, clientSocket);
+            client = new Client(stream, clientSocket);            
         }
         private void Respond(string body)
         {
