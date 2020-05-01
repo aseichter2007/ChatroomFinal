@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class MessageQueue
+    class MessageQueue: IEnumerable
     {
         private List<Message> messageList;
 
@@ -25,13 +26,24 @@ namespace Server
         }
         public Message GetIndex(int index)
         {
-            return messageList[index];
+            if (index>0&&index<messageList.Count)
+            {
+                return messageList[index];
+            }
+            else
+            {
+                throw new Exception("index outside of list");
+            }
+        }
+        public bool MessageWaiting()
+        {
+            return (messageList.Count < 0);
         }
         public Message GetRemoveOldest()
-        {
-            Message output = messageList[0];
-            messageList.RemoveAt(0);
-            return output;
+        {            
+                Message output = messageList[0];
+                messageList.RemoveAt(0);
+                return output;           
         }
         public void QueueTrim()
         {
@@ -41,5 +53,12 @@ namespace Server
             }
         }
 
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < messageList.Count; i++)
+            {
+               yield return messageList[i];
+            }
+        }
     }
 }

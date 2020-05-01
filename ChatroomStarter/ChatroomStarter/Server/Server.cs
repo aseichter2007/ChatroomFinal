@@ -21,27 +21,54 @@ namespace Server
             server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
             server.Start();
         }
+
         public void Run()
         {
-            bool run = true;
-            AcceptClient();
-
             do
             {
+                if (IsRunning())
+                {
+
+                }
+                else
+                {
+                    AsyncAccept();
+                }
+            } while (true);           
                 string message = client.Recieve();
 
                 Respond(message);
-            } while (run);
-            
+                
         }
-        private async void AcceptClient()
+        private async bool IsRunning()
+        {
+            bool output = true;
+            await AsyncAccept();
+            output = false;
+
+        }
+        private Task AsyncAccept()
+        {
+            return Task.Run(() =>
+            {
+                TcpClient clientSocket = default(TcpClient);
+                clientSocket = server.AcceptTcpClient();
+
+                Console.WriteLine("Connected");
+                NetworkStream stream = clientSocket.GetStream();
+                client = new Client(stream, clientSocket);
+                messageHandler.AddClientTolobby(client);
+            });
+        }
+        private void AcceptClient()
         {
             TcpClient clientSocket = default(TcpClient);
             clientSocket = server.AcceptTcpClient();
 
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
-            client = new Client(stream, clientSocket);            
+            client = new Client(stream, clientSocket);
+            messageHandler.AddClientTolobby(client);
         }
         private void Respond(string body)
         {

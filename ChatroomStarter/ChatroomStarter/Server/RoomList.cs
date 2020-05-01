@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace Server
 {
 
-    class RoomList
+    class RoomList : IEnumerable
     {
         private List<string> roomNames;
         private List<Room> rooms;
@@ -15,8 +16,7 @@ namespace Server
         {
             rooms = new List<Room>();
             roomNames = new List<string>();
-
-
+            CreateLobby();
         }
         public List<string> GetAvailableRooms()
         {
@@ -36,6 +36,23 @@ namespace Server
                 rooms.Add(newroom);
             }
             return output;
+        }
+        private void CreateLobby()
+        {
+            Room newroom = new Room("Lobby");
+            roomNames.Add("Lobby");
+            rooms.Add(newroom);
+        }
+        public void AddClientToLobby(Client client)
+        {
+            rooms[0].AddUser(client);
+        }
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                yield return rooms[i];
+            }
         }
     }
 }
