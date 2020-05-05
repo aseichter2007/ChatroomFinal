@@ -18,6 +18,10 @@ namespace Server
             roomNames = new List<string>();
             CreateLobby();
         }
+        public Room GetRoom(int index)
+        {
+            return rooms[index];
+        }
         public List<string> GetAvailableRooms()
         {
             return roomNames;

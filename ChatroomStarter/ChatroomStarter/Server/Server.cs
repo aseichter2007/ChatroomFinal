@@ -15,64 +15,94 @@ namespace Server
         public static Client client;
         TcpListener server;
         MessageHandler messageHandler;
+        Random random;
+        TcpClient clientSocket;
         public Server()
         {
+            random = new Random();
             messageHandler = new MessageHandler();
             server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
-            server.Start();
         }
 
         public void Run()
         {
-            do
-            {
-                if (IsRunning())
-                {
+            clientSocket = default(TcpClient);
 
-                }
-                else
-                {
-                    AsyncAccept();
-                }
-            } while (true);           
-                string message = client.Recieve();
+            Thread getClients = new Thread(IncomingConnecitons);
+            Thread incomingMessages = new Thread(IncomingMessages);
+            Thread outgoingMessages = new Thread(OutgoingMessages);
+            Thread handlemessage = new Thread(messageHandler.Run);
 
-                Respond(message);
-                
-        }
-        private async bool IsRunning()
+            getClients.Start();
+            incomingMessages.Start();
+            handlemessage.Start();
+            outgoingMessages.Start();
+        }        
+        public void IncomingConnecitons()
         {
-            bool output = true;
-            await AsyncAccept();
-            output = false;
-
-        }
-        private Task AsyncAccept()
-        {
-            return Task.Run(() =>
+            while (true)
             {
-                TcpClient clientSocket = default(TcpClient);
-                clientSocket = server.AcceptTcpClient();
 
-                Console.WriteLine("Connected");
-                NetworkStream stream = clientSocket.GetStream();
-                client = new Client(stream, clientSocket);
-                messageHandler.AddClientTolobby(client);
-            });
+                Task client = new Task.Factory.StartNew(AcceptClient);
+                client.Start();
+                client.Wait();
+            }
         }
+        public void IncomingMessages()
+        {
+            
+            foreach  (Client client in messageHandler.allusers)
+            {
+                recievable(client);
+            }
+            Thread.Sleep(100);
+        }
+        public void recievable(Client client)
+        {
+            messageHandler.Add( client.Recieve(),client);
+        }
+        public void OutgoingMessages()
+        {
+            //maybe I dont need this. Yet.
+        }
+        //private async bool IsRunning()
+        //{
+        //    bool output = true;
+        //    await AsyncAccept();
+        //    output = false;
+
+        //
+        //private Task AsyncAccept()
+        //{
+        //    return Task.Run(() =>
+        //    {
+        //        TcpClient clientSocket = default(TcpClient);
+        //        clientSocket = server.AcceptTcpClient();
+
+        //        Console.WriteLine("Connected");
+        //        NetworkStream stream = clientSocket.GetStream();
+        //        client = new Client(stream, clientSocket);
+        //        messageHandler.AddClientTolobby(client);
+        //    });
+        //}
         private void AcceptClient()
         {
-            TcpClient clientSocket = default(TcpClient);
             clientSocket = server.AcceptTcpClient();
 
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
-            client = new Client(stream, clientSocket);
+            string UID = random.Next(99999999).ToString();
+            while (messageHandler.allusers.CheckUser(UID))
+            {
+                UID = random.Next(99999999).ToString();
+            }
+            client = new Client(stream, clientSocket,UID);
+            
             messageHandler.AddClientTolobby(client);
         }
-        private void Respond(string body)
-        {
-             client.Send(body);
-        }
+        //private void Respond(string body)
+        //{
+        //     client.Send(body);
+        //}
     }
 }

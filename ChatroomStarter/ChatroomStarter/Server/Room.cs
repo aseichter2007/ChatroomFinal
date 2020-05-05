@@ -10,24 +10,27 @@ namespace Server
 {
     class Room : IEnumerable
     {
-        ConnectedUsers connectedUsers;
-        public List<Message> MessageLog;
+        public ConnectedUsers connectedUsers;
 
         private int count;
         public int Count
         {
             get => count;
         }
-        string name;
+         public string name;
         public Room(string name)
         {
             connectedUsers = new ConnectedUsers();
             this.name = name;
-            MessageLog = new List<Message>();
         }
         public void AddUser(Client client)
         {
             connectedUsers.AddUser(client);
+            Console.WriteLine(client.UserId + " has joined "+ name);
+        }
+        public void DisconnectUser(string userID)
+        {
+            connectedUsers.DisconnectUser(userID);
         }
 
         public IEnumerator GetEnumerator()

@@ -12,12 +12,15 @@ namespace Server
         NetworkStream stream;
         TcpClient client;
         public string UserId;
-        public Client(NetworkStream Stream, TcpClient Client)
+
+        public Client(NetworkStream Stream, TcpClient Client,string UID)
         {
             stream = Stream;
             client = Client;
-            UserId = "495933b6-1762-47a1-b655-483510072e73";
+            Random random = new Random();
+            UserId = UID;
         }
+        
         public void Send(string Message)
         {
             byte[] message = Encoding.ASCII.GetBytes(Message);
@@ -25,11 +28,19 @@ namespace Server
         }
         public string Recieve()
         {
-            byte[] recievedMessage = new byte[256];
-            stream.Read(recievedMessage, 0, recievedMessage.Length);
-            string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
-            Console.WriteLine(recievedMessageString);
-            return recievedMessageString;
+            if (stream.DataAvailable)
+            {
+                byte[] recievedMessage = new byte[256];
+                stream.Read(recievedMessage, 0, recievedMessage.Length);           
+                string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
+                Console.WriteLine(recievedMessageString);
+                return recievedMessageString;
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
     }
