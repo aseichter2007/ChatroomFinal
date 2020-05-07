@@ -8,7 +8,7 @@ namespace Client
 {
     static class MessageParse
     {
-        static char parsebreak = '█';
+        static char parsebreak = '\t';
 
         
         public static void ParseMessage(string message)

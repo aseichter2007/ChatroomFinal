@@ -8,7 +8,7 @@ namespace Client
 {
     static class MessageBuilder
     {
-        static char parsebreak = '█';
+        static char parsebreak = '\t';
         public static string room = "Lobby";
         static private List<string> commands= new List<string>() { "Message", "NewUsername", "JoinRoom", "CreateRoom", "LeaveRoom", "Roomlist", "Disconnect" };
 
@@ -18,13 +18,13 @@ namespace Client
             //[1] = room
             //[2] = whisper/newroom
             //[3] = message
-            string[] message = new string[4] { "", "", "", "" };
+            string[] message = new string[4] { "", room, "", "" };
             if (input.Contains('@')&&input.Contains(':'))
             {
                 int startWhisper = input.IndexOf('@');
                 int endwhisper = input.IndexOf(':');
                 message[0] = commands[0];
-                message[2] = input.Substring(startWhisper + 1, endwhisper);
+                message[2] = input.Substring(startWhisper + 1, endwhisper-1);
                 message[3] = input.Substring(endwhisper + 1);
             }
             else
@@ -46,22 +46,18 @@ namespace Client
                 }               
                 if (message[0] == commands[0])
                 {
-                    message[1] = room;
                     message[3] = input;
                 }
                 else if (message[0] == commands[1])
                 {
-                    message[1] = room;
                     message[3] = input;
                 }
                 else if (message[0] == commands[2])
                 {
-                    message[1] = room;
                     message[2] = input;
                 }
                 else if (message[0] == commands[3])
                 {
-                    message[1] = room;
                     message[2] = input;
                 }
             }
