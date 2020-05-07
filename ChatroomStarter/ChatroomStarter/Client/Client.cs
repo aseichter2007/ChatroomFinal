@@ -12,14 +12,12 @@ namespace Client
     {
         TcpClient clientSocket;
         NetworkStream stream;
-        string room;
 
         public Client(string IP, int port)
         {
             clientSocket = new TcpClient();
             clientSocket.Connect(IPAddress.Parse(IP), port);
             stream = clientSocket.GetStream();
-            room = "Lobby";
         }
         public void Send()
         {

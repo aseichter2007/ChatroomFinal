@@ -16,46 +16,47 @@ namespace Server
         TcpListener server;
         MessageHandler messageHandler;
         Random random;
-        TcpClient clientSocket;
         public Server()
         {
             random = new Random();
             messageHandler = new MessageHandler();
             server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
+            server.Start();
         }
 
         public void Run()
         {
-            clientSocket = default(TcpClient);
+            Parallel.Invoke(AcceptClient,IncomingMessages,messageHandler.Run);
+            //Thread getClients = new Thread(IncomingConnecitons);
+            //Thread incomingMessages = new Thread(IncomingMessages);
+            //Thread outgoingMessages = new Thread(OutgoingMessages);
+            //Thread handlemessage = new Thread(messageHandler.Run);
 
-            Thread getClients = new Thread(IncomingConnecitons);
-            Thread incomingMessages = new Thread(IncomingMessages);
-            Thread outgoingMessages = new Thread(OutgoingMessages);
-            Thread handlemessage = new Thread(messageHandler.Run);
-
-            getClients.Start();
-            incomingMessages.Start();
-            handlemessage.Start();
-            outgoingMessages.Start();
+            //getClients.Start();
+            //incomingMessages.Start();
+            //handlemessage.Start();
+            //outgoingMessages.Start();
         }        
-        public void IncomingConnecitons()
+        //public void IncomingConnecitons()
+        //{
+        //    while (true)
+        //    {
+
+        //        Task client = new Task(AcceptClient);
+        //        client.Start(); 
+        //        client.Wait();
+        //    }
+        //}
+        public void IncomingMessages()
         {
             while (true)
             {
-
-                Task client = new Task.Factory.StartNew(AcceptClient);
-                client.Start();
-                client.Wait();
+                foreach (string UID in messageHandler.allusers)
+                {
+                    recievable(messageHandler.allusers.TryGetUser(UID));
+                }
+                Thread.Sleep(100);
             }
-        }
-        public void IncomingMessages()
-        {
-            
-            foreach  (Client client in messageHandler.allusers)
-            {
-                recievable(client);
-            }
-            Thread.Sleep(100);
         }
         public void recievable(Client client)
         {
@@ -87,18 +88,23 @@ namespace Server
         //}
         private void AcceptClient()
         {
-            clientSocket = server.AcceptTcpClient();
-
-            Console.WriteLine("Connected");
-            NetworkStream stream = clientSocket.GetStream();
-            string UID = random.Next(99999999).ToString();
-            while (messageHandler.allusers.CheckUser(UID))
+            while (true)
             {
-                UID = random.Next(99999999).ToString();
+                TcpClient clientSocket = default(TcpClient); 
+
+                clientSocket = server.AcceptTcpClient();
+
+                Console.WriteLine("Connected");
+                NetworkStream stream = clientSocket.GetStream();
+                string UID = random.Next(99999999).ToString();
+                while (messageHandler.allusers.CheckUser(UID))
+                {
+                    UID = random.Next(99999999).ToString();
+                }
+                client = new Client(stream, clientSocket, UID);
+
+                messageHandler.AddClientTolobby(client);
             }
-            client = new Client(stream, clientSocket,UID);
-            
-            messageHandler.AddClientTolobby(client);
         }
         //private void Respond(string body)
         //{

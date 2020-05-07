@@ -47,11 +47,11 @@ namespace Server
         }
         public void Broadcast(string[] data, string senderID, Room room)
         {
-            if (data[2] != "")
+            if (data[1] != "")
             {
                 foreach (Client client in room)
                 {
-                    client.Send(0 + parsebreak + senderID + parsebreak + data[3]);
+                    client.Send(0 + parsebreak + senderID +":"+ parsebreak + data[3]);
                 }
             }
             else
@@ -59,7 +59,7 @@ namespace Server
                 if (allusers.CheckUser(data[2]))
                 {
                     Client whisper = allusers.TryGetUser(data[2]);
-                    whisper.Send(0 + parsebreak + senderID + parsebreak + data[3]);                        
+                    whisper.Send(0 + parsebreak + senderID + ":" + parsebreak + data[3]);                        
                 }
             }
         }
@@ -83,7 +83,7 @@ namespace Server
                     {
                         allusers.ChangeUID(old, data[3]);
                         working.connectedUsers.ChangeUID(old, data[3]);
-                        client.Send(1 + parsebreak + "your new username is " + data[3]);
+                        client.Send(1 + parsebreak + "your new username is " +parsebreak+ data[3]);
                     }
                     else
                     {
@@ -110,7 +110,7 @@ namespace Server
                 case "LeaveRoom":
                     working.connectedUsers.DisconnectUser(client.UserId);
                     roomList.AddClientToLobby(client);
-                    client.Send(2 + parsebreak + client.UserId + parsebreak + "you rejoined the Lobby");
+                    client.Send(2 + parsebreak + "Lobby" + parsebreak + "you rejoined the Lobby");
                     break;
                 case "Disconnect":
                     allusers.DisconnectUser(client.UserId);
@@ -118,14 +118,13 @@ namespace Server
                     client.Send(9 + parsebreak + client.UserId + parsebreak + "Goodbye. Please come again.");
                     break;
                 case "Roomlist":
-                    
-
+                    foreach (string room in rooms)
+                    {
+                        client.Send(0 + parsebreak + "Available room:" + parsebreak + room);
+                    }  
                     break;
                     
             }
-
-
-
         }
         private int MessageCommands(string data)
         {

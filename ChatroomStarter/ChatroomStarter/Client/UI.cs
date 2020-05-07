@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,16 @@ namespace Client
             return Task.Run(() => 
             Console.ReadLine()
             );
+        }
+        public static void DisplayHelp()
+        {
+            Console.WriteLine("Available Commands:");
+            Console.WriteLine("/username 'name' sets new username");
+            Console.WriteLine("/newroom 'room name' creates new room");
+            Console.WriteLine("/join 'room' joins room if it exists");
+            Console.WriteLine("/lobby returns you to the lobby.");
+            Console.WriteLine("/roomlist gets list of available rooms");
+            Console.WriteLine("@'username': whispers to user");
         }
     }
 }

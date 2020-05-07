@@ -14,15 +14,17 @@ namespace Client
         public void ParseMessage(string message)
         {
             string[] working = message.Split(parsebreak);
+            Console.WriteLine(working[1] + ":" + working[2]);
+
 
             switch (working[0])
             {
                 case "0":
-                    Console.WriteLine(working[1] + ":" + working[2] );
                     break;
                 case "1":
                     break;
                 case "2":
+                    MessageBuilder.room = working[1];
                     break;
                 case "3":
                     break;
