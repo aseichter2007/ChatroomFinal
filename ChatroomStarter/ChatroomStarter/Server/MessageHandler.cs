@@ -51,7 +51,7 @@ namespace Server
             {
                 foreach (Client client in room)
                 {
-                    client.Send(0 + parsebreak + senderID +":"+ parsebreak + data[3]);
+                    client.Send(0 + parsebreak + senderID +":"+ parsebreak + data[3] + parsebreak);
                 }
             }
             else
@@ -59,7 +59,7 @@ namespace Server
                 if (allusers.CheckUser(data[2]))
                 {
                     Client whisper = allusers.TryGetUser(data[2]);
-                    whisper.Send(0 + parsebreak + senderID + ":" + parsebreak + data[3]);                        
+                    whisper.Send(0 + parsebreak + senderID + ":" + parsebreak + data[3] + parsebreak);                        
                 }
             }
         }
@@ -70,12 +70,15 @@ namespace Server
             //[2] = whisper
             //[3] = message
             List<string> rooms = roomList.GetAvailableRooms();
-            Room working = roomList.GetRoom(rooms.IndexOf(data[1]));
+            int thisroom = rooms.IndexOf(data[1]);
+            Room working = roomList.rooms[thisroom];
 
             switch (data[0])
             {
                 case "Message":
+                    client.Send("8"+parsebreak+parsebreak+"" + parsebreak);
                     Broadcast(data, client.UserId, working);
+
                     break;
                 case "NewUsername":
                     string old = client.UserId;
@@ -83,55 +86,50 @@ namespace Server
                     {
                         allusers.ChangeUID(old, data[3]);
                         working.connectedUsers.ChangeUID(old, data[3]);
-                        client.Send(1 + parsebreak + "your new username is " +parsebreak+ data[3]);
+                        client.Send(1 + parsebreak + "your new username is " +parsebreak+ data[3] + parsebreak);
                     }
                     else
                     {
-                        client.Send(0 + parsebreak + client.UserId + parsebreak + "this name is taken");
+                        client.Send(0 + parsebreak + client.UserId + parsebreak + "this name is taken" + parsebreak);
                     }
                     
                     break;
                 case "JoinRoom":
-                    if (rooms.Contains(data[1]))
+                    if (rooms.Contains(data[2]))
                     {                        
                         working.AddUser(client);
-                        client.Send(2+parsebreak+data[1]+parsebreak+"joined "+working.name);
+                        client.Send(2+parsebreak+data[1]+parsebreak+"joined "+working.name + parsebreak);
                     }
 
                     else
                     {
-                        client.Send(0+parsebreak+client.UserId+parsebreak+"Room does not exist");
+                        client.Send(0+parsebreak+client.UserId+parsebreak+"Room does not exist" + parsebreak);
                     }
                     break;
                 case "CreateRoom":
                     roomList.CreateRoom(data[1]);
-                    client.Send(2+parsebreak+data[1]+parsebreak+data[1]);
+                    client.Send(2+parsebreak+data[1]+parsebreak+data[1] + parsebreak);
                     break;
                 case "LeaveRoom":
                     working.connectedUsers.DisconnectUser(client.UserId);
                     roomList.AddClientToLobby(client);
-                    client.Send(2 + parsebreak + "Lobby" + parsebreak + "you rejoined the Lobby");
+                    client.Send(2 + parsebreak + "Lobby" + parsebreak + "you rejoined the Lobby" + parsebreak);
                     break;
                 case "Disconnect":
                     allusers.DisconnectUser(client.UserId);
                     working.connectedUsers.DisconnectUser(client.UserId);
-                    client.Send(9 + parsebreak + client.UserId + parsebreak + "Goodbye. Please come again.");
+                    client.Send(9 + parsebreak + client.UserId + parsebreak + "Goodbye. Please come again." + parsebreak);
                     break;
                 case "Roomlist":
                     foreach (string room in rooms)
                     {
-                        client.Send(0 + parsebreak + "Available room:" + parsebreak + room);
+                        client.Send(0 + parsebreak + "Available room:" + parsebreak + room + parsebreak);
                     }  
                     break;
                     
             }
         }
-        private int MessageCommands(string data)
-        {
-            int output = 0;
-            
-            return output;
-        }
+       
         public void AddClientTolobby(Client client)
         {
             allusers.AddUser(client);

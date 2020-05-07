@@ -11,7 +11,7 @@ namespace Server
     class RoomList : IEnumerable
     {
         private List<string> roomNames;
-        private List<Room> rooms;
+        public List<Room> rooms;
         public RoomList()
         {
             rooms = new List<Room>();

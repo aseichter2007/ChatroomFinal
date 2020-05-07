@@ -27,7 +27,7 @@ namespace Server
         
         public bool MessageWaiting()
         {
-            return (messageList.Count < 0);
+            return (messageList.Count > 0);
         }       
     }
 }

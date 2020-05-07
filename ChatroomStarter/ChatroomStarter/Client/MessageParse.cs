@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    class MessageParse
+    static class MessageParse
     {
-        char parsebreak = '█';
+        static char parsebreak = '█';
 
         
-        public void ParseMessage(string message)
+        public static void ParseMessage(string message)
         {
             string[] working = message.Split(parsebreak);
-            Console.WriteLine(working[1] + ":" + working[2]);
-
-
+            if (working[0]=="8")
+            {
+                return;
+            }
+            UI.DisplayMessage(working[1] + ":" + working[2]);
             switch (working[0])
             {
                 case "0":

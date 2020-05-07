@@ -12,11 +12,7 @@ namespace Client
         {
             Client client = new Client("127.0.0.1", 9999);
             bool Connected = true;
-            while (Connected)
-            {
-                client.Send();
-                client.Recieve();
-            }
+            Parallel.Invoke(client.Send, client.Recieve);
             
             
             Console.ReadLine();

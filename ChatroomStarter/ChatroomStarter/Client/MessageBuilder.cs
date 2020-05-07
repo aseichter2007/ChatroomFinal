@@ -16,9 +16,8 @@ namespace Client
         {
             //[0] = commands
             //[1] = room
-            //[2] = whisper
+            //[2] = whisper/newroom
             //[3] = message
-            int output = 0;
             string[] message = new string[4] { "", "", "", "" };
             if (input.Contains('@')&&input.Contains(':'))
             {
@@ -30,41 +29,58 @@ namespace Client
             }
             else
             {
-                int split = input.IndexOf(' ');
-                message[0] = ProperCommands(input);
+                int split = 0;
+                if (input.IndexOf('/')==0)
+                {
+                    message[0] = ProperCommands(input);
+
+                    if (input.Contains(' '))
+                    {
+                       split = input.IndexOf(' ');
+                       input = input.Substring(split);
+                    }
+                }
+                else
+                {
+                    message[0] = commands[0];
+                }               
                 if (message[0] == commands[0])
                 {
                     message[1] = room;
-                    message[3] = input.Substring(split);
+                    message[3] = input;
                 }
                 else if (message[0] == commands[1])
                 {
-                    message[3] = input.Substring(split);
+                    message[1] = room;
+                    message[3] = input;
                 }
                 else if (message[0] == commands[2])
                 {
-                    message[1] = input.Substring(split);
+                    message[1] = room;
+                    message[2] = input;
                 }
                 else if (message[0] == commands[3])
                 {
-                    message[1] = input.Substring(split);
+                    message[1] = room;
+                    message[2] = input;
                 }
-               
-                
-                
-
             }
 
             if (message[0]!="0")
             {
-                return (message[0] + parsebreak + message[1] + parsebreak + message[2] + parsebreak + message[3])
+                return (message[0] + parsebreak + message[1] + parsebreak + message[2] + parsebreak + message[3]+parsebreak);
             }
             return null;
         }
         private static string ProperCommands(string input)
         {
-            int cut = input.IndexOf(' ');
-            switch (input.ToLower().Substring(0,cut))
+            int cut = 0;
+            if (input.Contains(' '))
+            {
+                cut = input.IndexOf(' ');
+               input = input.Substring(0, cut);
+            }
+            switch (input.ToLower())
             {
                 case "/username":
                     return commands[1];
