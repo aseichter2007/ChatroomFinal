@@ -31,6 +31,9 @@ namespace Client
                 case "3":
                     break;
                 case "9":
+                    UI.DisplayMessage("press enter to exit the application");
+                    UI.GetInput();
+                    Environment.Exit(0);
                     break;
 
             }

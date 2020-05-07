@@ -17,18 +17,7 @@ namespace Client
         {
             return Console.ReadLine();
         }
-        public static async Task<string> WaitInput()
-        {
-            string output = await AsyncInput();
-
-            return output;
-        }
-        public static Task<string> AsyncInput()
-        {
-            return Task.Run(() => 
-            Console.ReadLine()
-            );
-        }
+        
         public static void DisplayHelp()
         {
             Console.WriteLine("Available Commands:");

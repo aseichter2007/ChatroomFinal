@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Client
+    class Client:INotify
     {
         NetworkStream stream;
         TcpClient client;
@@ -43,5 +43,10 @@ namespace Server
             
         }
 
+        public void Notify(string Message)
+        {
+                byte[] message = Encoding.ASCII.GetBytes(Message);
+                stream.Write(message, 0, message.Count());           
+        }
     }
 }

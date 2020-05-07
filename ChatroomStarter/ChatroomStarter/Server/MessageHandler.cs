@@ -104,8 +104,10 @@ namespace Server
                     if (rooms.Contains(data[2]))
                     {
                         working.DisconnectUser(client.UserId);
-                        working = roomList.GetRoom(rooms.IndexOf(data[2]));
+                        int roomnumber = rooms.IndexOf(data[2]);
+                        working = roomList.GetRoom(roomnumber);
                         working.AddUser(client);
+                        NotifyJoin(roomnumber, client);
                         client.Send("2"+parsebreak+data[2]+parsebreak+ "left "+data[1] + " joined "+working.name + parsebreak);
                     }
 
@@ -147,6 +149,17 @@ namespace Server
         {
             allusers.AddUser(client);
             roomList.AddClientToLobby(client);
+            NotifyJoin(0,client);
+        }
+        private void NotifyJoin(int roomnumber,Client client)
+        {
+            Room working = roomList.GetRoom(roomnumber);
+            foreach (Client user in working)
+            {
+                user.Notify("M"+parsebreak +"notice" +parsebreak+ client.UserId + " has joined the room"+parsebreak);
+            }
+
+            
         }
         public void Add(string message,Client client)
         {

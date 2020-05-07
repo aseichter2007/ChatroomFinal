@@ -62,30 +62,7 @@ namespace Server
         {
             messageHandler.Add( client.Recieve(),client);
         }
-        public void OutgoingMessages()
-        {
-            //maybe I dont need this. Yet.
-        }
-        //private async bool IsRunning()
-        //{
-        //    bool output = true;
-        //    await AsyncAccept();
-        //    output = false;
-
-        //
-        //private Task AsyncAccept()
-        //{
-        //    return Task.Run(() =>
-        //    {
-        //        TcpClient clientSocket = default(TcpClient);
-        //        clientSocket = server.AcceptTcpClient();
-
-        //        Console.WriteLine("Connected");
-        //        NetworkStream stream = clientSocket.GetStream();
-        //        client = new Client(stream, clientSocket);
-        //        messageHandler.AddClientTolobby(client);
-        //    });
-        //}
+        
         private void AcceptClient()
         {
             while (true)
@@ -105,10 +82,6 @@ namespace Server
 
                 messageHandler.AddClientTolobby(client);
             }
-        }
-        //private void Respond(string body)
-        //{
-        //     client.Send(body);
-        //}
+        }        
     }
 }
