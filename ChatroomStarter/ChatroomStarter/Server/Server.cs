@@ -26,27 +26,27 @@ namespace Server
 
         public void Run()
         {
-            Parallel.Invoke(AcceptClient,IncomingMessages,messageHandler.Run);
-            //Thread getClients = new Thread(IncomingConnecitons);
-            //Thread incomingMessages = new Thread(IncomingMessages);
+            //Parallel.Invoke(AcceptClient,IncomingMessages,messageHandler.Run);
+            Thread getClients = new Thread(IncomingConnecitons);
+            Thread incomingMessages = new Thread(IncomingMessages);
             //Thread outgoingMessages = new Thread(OutgoingMessages);
-            //Thread handlemessage = new Thread(messageHandler.Run);
+            Thread handlemessage = new Thread(messageHandler.Run);
 
-            //getClients.Start();
-            //incomingMessages.Start();
-            //handlemessage.Start();
+            getClients.Start();
+            incomingMessages.Start();
+            handlemessage.Start();
             //outgoingMessages.Start();
-        }        
-        //public void IncomingConnecitons()
-        //{
-        //    while (true)
-        //    {
+        }
+        public void IncomingConnecitons()
+        {
+            while (true)
+            {
 
-        //        Task client = new Task(AcceptClient);
-        //        client.Start(); 
-        //        client.Wait();
-        //    }
-        //}
+                Task client = new Task(AcceptClient);
+                client.Start();
+                client.Wait();
+            }
+        }
         public void IncomingMessages()
         {
             while (true)
